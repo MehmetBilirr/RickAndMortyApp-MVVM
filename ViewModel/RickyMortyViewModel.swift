@@ -14,7 +14,7 @@ protocol RickyMortyViewModelProtocol {
     var rickyMortyVCDelegate:RickyMortyViewControlProtocol? {get}
     func fetchCharacters()
     func changeLoading()
-    func setDelegate(output:RickyMortyViewControlProtocol)
+    func setDelegate(_ output:RickyMortyViewControlProtocol)
     
     
 }
@@ -22,7 +22,7 @@ protocol RickyMortyViewModelProtocol {
 final class RickyMortyViewModel:RickyMortyViewModelProtocol {
     var rickyMortyVCDelegate: RickyMortyViewControlProtocol?
     
-    func setDelegate(output: RickyMortyViewControlProtocol) {
+    func setDelegate(_ output: RickyMortyViewControlProtocol) {
         self.rickyMortyVCDelegate = output
     }
     

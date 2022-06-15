@@ -24,14 +24,19 @@ final class RickyMortyVC: UIViewController {
         // Do any additional setup after loading the view.
         Configure()
         viewModel.fetchCharacters()
-        viewModel.setDelegate(output: self)
+        viewModel.setDelegate(self)
         
     }
     private func drawDesign() {
+        
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
+        self.tableView.register(RickyMortyTableViewCell.self, forCellReuseIdentifier: RickyMortyTableViewCell.Identifier.id.rawValue)
+        tableView.rowHeight = self.view.frame.size.height * 0.25
         DispatchQueue.main.async {
-            self.tableView.delegate = self
-            self.tableView.dataSource = self
+            
             self.labelTitle.text = "Ricky and Morty"
+            self.labelTitle.font = .boldSystemFont(ofSize: 20)
             self.labelTitle.textColor = .black
             self.view.backgroundColor = .white
             self.tableView.backgroundColor = .red
@@ -74,8 +79,12 @@ extension RickyMortyVC:UITableViewDelegate,UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell()
-        cell.textLabel?.text = results[indexPath.row].name ?? ""
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: RickyMortyTableViewCell.Identifier.id.rawValue) as? RickyMortyTableViewCell else {
+            return UITableViewCell()
+        }
+        cell.saveModel(model: results[indexPath.row])
+        
+        
         return cell
     }
     
