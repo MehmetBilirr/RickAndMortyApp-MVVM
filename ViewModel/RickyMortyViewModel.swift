@@ -11,29 +11,40 @@ protocol RickyMortyViewModelProtocol {
     
     var rickyMortyCharacters: [Result] {get set}
     var rickyMortyService: RickyMortyService {get}
+    var rickyMortyVCDelegate:RickyMortyViewControlProtocol? {get}
     func fetchCharacters()
     func changeLoading()
+    func setDelegate(output:RickyMortyViewControlProtocol)
     
     
 }
 
-class RickyMortyViewModel:RickyMortyViewModelProtocol {
-    var rickyMortyCharacters: [Result] = []
+final class RickyMortyViewModel:RickyMortyViewModelProtocol {
+    var rickyMortyVCDelegate: RickyMortyViewControlProtocol?
     
+    func setDelegate(output: RickyMortyViewControlProtocol) {
+        self.rickyMortyVCDelegate = output
+    }
+    
+    var rickyMortyCharacters: [Result] = []
+    private var isLoading = false 
     let rickyMortyService: RickyMortyService
     init() {
         rickyMortyService = RickyMortyService()
     }
     
     func fetchCharacters() {
-        changeLoading()
-        rickyMortyService.fetchCharacters { result in
-            changeLoading()
-            self.rickyMortyCharacters = result ?? []
+        self.changeLoading()
+        rickyMortyService.fetchCharacters { [weak self] result in
+            self?.changeLoading()
+            self?.rickyMortyCharacters = result ?? []
+            self?.rickyMortyVCDelegate?.saveData(values: self?.rickyMortyCharacters ?? [])
         }
     }
     
     func changeLoading() {
+        isLoading = !isLoading
+        rickyMortyVCDelegate?.changeLoading(isLoad: isLoading)
         
     }
     

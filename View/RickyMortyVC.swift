@@ -8,22 +8,33 @@
 import UIKit
 import SnapKit
 
+protocol RickyMortyViewControlProtocol {
+    func changeLoading(isLoad:Bool)
+    func saveData(values: [Result])
+}
+
 final class RickyMortyVC: UIViewController {
     private let labelTitle:UILabel = UILabel()
-    private let box:UIView = UIView()
+    private let tableView:UITableView = UITableView()
     private let indicator : UIActivityIndicatorView = UIActivityIndicatorView()
+    private var results: [Result] = []
+    lazy var viewModel:RickyMortyViewModel = RickyMortyViewModel()
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         Configure()
+        viewModel.fetchCharacters()
+        viewModel.setDelegate(output: self)
         
     }
     private func drawDesign() {
         DispatchQueue.main.async {
-            self.labelTitle.text = "Mehmet Bilir"
+            self.tableView.delegate = self
+            self.tableView.dataSource = self
+            self.labelTitle.text = "Ricky and Morty"
             self.labelTitle.textColor = .black
             self.view.backgroundColor = .white
-            self.box.backgroundColor = .red
+            self.tableView.backgroundColor = .red
             self.indicator.startAnimating()
         }
         
@@ -32,7 +43,7 @@ final class RickyMortyVC: UIViewController {
     private func Configure() {
         
         view.addSubview(labelTitle)
-        view.addSubview(box)
+        view.addSubview(tableView)
         view.addSubview(indicator)
         makeLabel()
         makeBox()
@@ -42,6 +53,34 @@ final class RickyMortyVC: UIViewController {
     }
     
 
+}
+
+extension RickyMortyVC:RickyMortyViewControlProtocol {
+    func changeLoading(isLoad: Bool) {
+        isLoad ? indicator.startAnimating() : indicator.stopAnimating()
+    }
+    
+    func saveData(values: [Result]) {
+        results = values
+        tableView.reloadData()
+    }
+    
+    
+}
+
+extension RickyMortyVC:UITableViewDelegate,UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return results.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell()
+        cell.textLabel?.text = results[indexPath.row].name ?? ""
+        return cell
+    }
+    
+    
+    
 }
 
 extension RickyMortyVC {
@@ -71,7 +110,7 @@ extension RickyMortyVC {
             
         
     func makeBox() {
-        box.snp.makeConstraints { make in
+        tableView.snp.makeConstraints { make in
             make.top.equalTo(labelTitle.snp.bottom).offset(5)
             make.bottom.equalToSuperview()
             make.left.right.equalToSuperview()
