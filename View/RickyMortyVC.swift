@@ -19,11 +19,14 @@ final class RickyMortyVC: UIViewController {
         
     }
     private func drawDesign() {
+        DispatchQueue.main.async {
+            self.labelTitle.text = "Mehmet Bilir"
+            self.labelTitle.textColor = .black
+            self.view.backgroundColor = .white
+            self.box.backgroundColor = .red
+            self.indicator.startAnimating()
+        }
         
-        labelTitle.text = "Mehmet Bilir"
-        labelTitle.textColor = .black
-        view.backgroundColor = .white
-        box.backgroundColor = .red
     }
     
     private func Configure() {
@@ -31,12 +34,11 @@ final class RickyMortyVC: UIViewController {
         view.addSubview(labelTitle)
         view.addSubview(box)
         view.addSubview(indicator)
-        indicator.startAnimating()
         makeLabel()
         makeBox()
         makeIndicator()
         drawDesign()
-        asdadsad
+        
     }
     
 
